@@ -1,0 +1,121 @@
+{
+  "site": {
+    "name": "GameRank Pro",
+    "titleSuffix": "| GameRank Pro - Mobile Game Rankings & Guides",
+    "description": "Top mobile game rankings for iOS & Android 2026, curated structured beginner guides, boss strategies, team builds, gacha pull advice. English, 100% ad-free.",
+    "tagline": "Top 100 global mobile games + 5 patch-specific guides per title — save your time, play smarter."
+  },
+  "nav": {
+    "home": "Home",
+    "games": "All Games",
+    "allGames": "All Games",
+    "categories": "Genres",
+    "ranking": "Rankings",
+    "search": "Search games / guides",
+    "searchPlaceholder": "Try \"Genshin\", \"PUBG Mobile\""
+  },
+  "home": {
+    "heroTitle": "Best Mobile Games to Play in 2026",
+    "heroSubtitle": "iOS + Android cross-platform rankings · Structured guides · 100% Ad-Free",
+    "globalRankingTitle": "🔥 Top 20 Global Trending",
+    "globalRankingSubtitle": "Weighted by App Store rank, TapTap score, downloads, and user ratings",
+    "categoryRankingTitle": "📊 Top by Category",
+    "latestGuidesTitle": "📖 Recently Updated Guides",
+    "viewAll": "View All →"
+  },
+  "game": {
+    "platform": "Platform",
+    "ios": "iOS",
+    "android": "Android",
+    "category": "Genre",
+    "developer": "Developer",
+    "publisher": "Publisher",
+    "releaseDate": "Release Date",
+    "rating": "Overall Score",
+    "taptapRating": "TapTap Rating",
+    "appStoreRating": "App Store Rating",
+    "ratingCount": "Ratings",
+    "globalRank": "Global Rank",
+    "iosRank": "iOS Rank",
+    "androidRank": "Android Rank",
+    "downloads": "Est. Downloads",
+    "overview": "Overview",
+    "guides": "Guides",
+    "related": "Related Games",
+    "noDescription": "No description available yet."
+  },
+  "guide": {
+    "type": {
+      "beginner": "🏷️ Beginner Guide",
+      "team": "🎴 Team Build",
+      "boss": "⚔️ Boss Strategy",
+      "gacha": "💎 Gacha Pull Advice",
+      "faq": "❓ FAQ"
+    },
+    "applicableVersion": "📱 App Version",
+    "lastUpdated": "🕒 Updated",
+    "readMinutes": "⏱️ Reading Time",
+    "minutes": "~{n} min",
+    "tldr": "💡 TL;DR Summary",
+    "corePoints": "✅ Key Takeaways",
+    "feedbackQuestion": "Was this guide helpful?",
+    "useful": "👍 Yes",
+    "useless": "👎 No",
+    "thanksForFeedback": "Thanks for your feedback!",
+    "tableOfContents": "Table of Contents",
+    "otherGuidesForGame": "More guides for this game",
+    "relatedGuides": "You may also like",
+    "share": "Share",
+    "copyLink": "Copy Link",
+    "noLocaleContent": "⚠️ This guide is not yet available in {locale}. Switch to another language."
+  },
+  "gamesPage": {
+    "title": "All Games",
+    "subtitle": "Filter by platform / genre, or sort to find your next game.",
+    "filters": {
+      "allPlatforms": "All Platforms",
+      "allCategories": "All Genres",
+      "sortBy": "Sort by",
+      "sortByRank": "Trending",
+      "sortByRating": "Top Rated",
+      "sortByNewest": "Newest",
+      "sortByName": "A-Z"
+    },
+    "noResults": "No games found."
+  },
+  "searchPage": {
+    "title": "Search: {query}",
+    "noResults": "No results found for \"{query}\".",
+    "resultsCount": "{n} results",
+    "tabGames": "Games ({n})",
+    "tabGuides": "Guides ({n})"
+  },
+  "categories": {
+    "rpg": "RPG",
+    "strategy": "Strategy",
+    "casual": "Casual",
+    "shooter": "Shooter",
+    "card": "Card / Gacha",
+    "simulation": "Simulation",
+    "action": "Action",
+    "puzzle": "Puzzle",
+    "sports": "Sports",
+    "racing": "Racing"
+  },
+  "platforms": {
+    "ios": "iOS · iPhone & iPad",
+    "android": "Android · Google Play"
+  },
+  "language": {
+    "switch": "Language",
+    "current": "Current language"
+  },
+  "footer": {
+    "about": "About",
+    "sitemap": "Sitemap",
+    "copyright": "© 2026 GameRank Pro. All game trademarks belong to their respective owners.",
+    "noAds": "🧼 100% ad-free in early stage.",
+    "disclaimerH": "Disclaimer & DMCA Takedown:",
+    "disclaimer": "All game names, logos, artwork, screenshots and videos are the property of their respective developers and publishers. GameRank Pro operates as an informational aggregator of public rankings, scores and patch-guide summaries. We do NOT host or distribute game installers, private servers, or cracked content. If you believe any material infringes your copyright, please send a DMCA-compliant notice and we will remove it within 48 hours."
+  }
+}

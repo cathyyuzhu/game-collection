@@ -1,0 +1,121 @@
+{
+  "site": {
+    "name": "GameRank Pro",
+    "titleSuffix": "｜GameRank Pro - 手遊排行榜與攻略中心",
+    "description": "2026 最新手遊排行榜、iOS/安卓雙平台熱門遊戲推薦、精選結構化新手攻略、Boss 打法、配隊推薦、抽卡建議，繁體中文免費無廣告。",
+    "tagline": "Top 100 手遊熱度榜 + 每次版號適配攻略，幫玩家節省時間。"
+  },
+  "nav": {
+    "home": "首頁",
+    "games": "全部遊戲",
+    "allGames": "全部遊戲",
+    "categories": "遊戲分類",
+    "ranking": "排行榜",
+    "search": "搜尋遊戲 / 攻略",
+    "searchPlaceholder": "試試「原神」「王者榮耀」"
+  },
+  "home": {
+    "heroTitle": "2026 年最值得玩的手遊",
+    "heroSubtitle": "iOS + 安卓 雙平台 權威榜單 · 結構化攻略 · 無廣告",
+    "globalRankingTitle": "🔥 綜合熱度榜 Top 20",
+    "globalRankingSubtitle": "綜合 App Store、TapTap、下載量、評分加權計算",
+    "categoryRankingTitle": "📊 分類熱門榜",
+    "latestGuidesTitle": "📖 最新更新攻略",
+    "viewAll": "查看全部 →"
+  },
+  "game": {
+    "platform": "平台",
+    "ios": "iOS",
+    "android": "安卓",
+    "category": "分類",
+    "developer": "開發商",
+    "publisher": "發行商",
+    "releaseDate": "發行日期",
+    "rating": "綜合評分",
+    "taptapRating": "TapTap 評分",
+    "appStoreRating": "App Store 評分",
+    "ratingCount": "評價人數",
+    "globalRank": "綜合排名",
+    "iosRank": "iOS 榜排名",
+    "androidRank": "安卓榜排名",
+    "downloads": "下載量估算",
+    "overview": "概覽",
+    "guides": "攻略",
+    "related": "相關遊戲",
+    "noDescription": "暫無遊戲簡介。"
+  },
+  "guide": {
+    "type": {
+      "beginner": "🏷️ 新手入門",
+      "team": "🎴 配隊推薦",
+      "boss": "⚔️ Boss 攻略",
+      "gacha": "💎 抽卡建議",
+      "faq": "❓ 常見問題"
+    },
+    "applicableVersion": "📱 適用版本",
+    "lastUpdated": "🕒 最後更新",
+    "readMinutes": "⏱️ 閱讀時長",
+    "minutes": "約 {n} 分鐘",
+    "tldr": "💡 TL;DR 核心摘要",
+    "corePoints": "✅ 核心要點",
+    "feedbackQuestion": "這篇攻略有用嗎？",
+    "useful": "👍 有用",
+    "useless": "👎 沒用",
+    "thanksForFeedback": "感謝你的回饋！",
+    "tableOfContents": "目錄",
+    "otherGuidesForGame": "同遊戲其他攻略",
+    "relatedGuides": "你可能還喜歡",
+    "share": "分享",
+    "copyLink": "複製連結",
+    "noLocaleContent": "⚠️ 該攻略暫無 {locale} 版本，可以切換其他語言閱讀。"
+  },
+  "gamesPage": {
+    "title": "全部遊戲",
+    "subtitle": "按平台、分類篩選，或排序找你喜歡的手遊",
+    "filters": {
+      "allPlatforms": "全部平台",
+      "allCategories": "全部分類",
+      "sortBy": "排序方式",
+      "sortByRank": "綜合熱度",
+      "sortByRating": "評分最高",
+      "sortByNewest": "最新上線",
+      "sortByName": "字母序"
+    },
+    "noResults": "沒有找到匹配的遊戲。"
+  },
+  "searchPage": {
+    "title": "搜尋：{query}",
+    "noResults": "沒有找到關於「{query}」的結果。",
+    "resultsCount": "共找到 {n} 條結果",
+    "tabGames": "遊戲 ({n})",
+    "tabGuides": "攻略 ({n})"
+  },
+  "categories": {
+    "rpg": "角色扮演",
+    "strategy": "策略",
+    "casual": "休閒",
+    "shooter": "射擊",
+    "card": "卡牌",
+    "simulation": "模擬",
+    "action": "動作",
+    "puzzle": "益智",
+    "sports": "體育",
+    "racing": "競速"
+  },
+  "platforms": {
+    "ios": "iOS · iPhone / iPad",
+    "android": "安卓 · Android"
+  },
+  "language": {
+    "switch": "切換語言",
+    "current": "目前語言"
+  },
+  "footer": {
+    "about": "關於我們",
+    "sitemap": "網站地圖",
+    "copyright": "© 2026 GameRank Pro. 本站內容為結構化資訊聚合，遊戲版權歸各開發商所有。",
+    "noAds": "🧼 本站承諾前期不投放廣告。",
+    "disclaimerH": "免責聲明（DMCA / 版權投訴）：",
+    "disclaimer": "本站所有遊戲名稱、圖示、截圖與影片版權歸其原始開發者及發行商所有。本站僅提供基於公開資訊聚合的排行、評分與攻略導讀服務，不提供任何遊戲本體下載或私服性質服務。若您認為有任何內容侵犯了您的版權，請透過 DMCA 流程聯絡我們，我們將於 48 小時內移除相關內容。"
+  }
+}

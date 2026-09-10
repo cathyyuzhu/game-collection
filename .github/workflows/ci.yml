@@ -1,0 +1,32 @@
+# CI: type-check + build verification (runs on every PR & push)
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: cd web && npm ci
+
+      - name: Generate Prisma Client
+        run: cd web && npx prisma@5 generate
+
+      - name: Build (SQLite dev mode)
+        run: cd web && npm run build
+        env:
+          DATABASE_URL: "file:./dev.db?connection_limit=1"

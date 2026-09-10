@@ -1,0 +1,41 @@
+# ===== Core Dependencies =====
+python-dotenv>=1.0.0
+loguru>=0.7.2
+
+# ===== Database =====
+# Note: prisma-client-py 0.13.0 requires Python <= 3.12; on 3.13+ we use sqlite3 stdlib directly
+# prisma==0.13.0
+# SQLite3 is built into Python standard library
+
+# ===== HTTP & Networking =====
+httpx>=0.27.0
+requests>=2.31.0
+aiohttp>=3.9.0
+tenacity>=8.2.3  # retry logic
+
+# ===== HTML Parsing =====
+beautifulsoup4>=4.12.0
+lxml>=5.1.0
+html5lib>=1.1
+feedparser>=6.0.11  # RSS/Atom parsing for App Store
+
+# ===== Browser Automation (for dynamic sites like TapTap) =====
+# playwright>=1.40.0   # install only if you really need browser automation; also heavy
+# After install, run: playwright install chromium
+
+# ===== LLM =====
+openai>=1.10.0  # DeepSeek is OpenAI-compatible API
+jinja2>=3.1.2   # Prompt templates
+
+# ===== Data Validation & Structured Output =====
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# ===== Text Processing =====
+# difflib and hashlib are standard library; no extra packages
+markdown-it-py>=3.0.0
+python-slugify>=8.0.1
+
+# ===== Utilities =====
+python-dateutil>=2.8.2
+pytz>=2023.3

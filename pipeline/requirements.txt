@@ -1,0 +1,50 @@
+# ===================== LLM & Prompt =====================
+openai>=1.40              # 兼容 DeepSeek 官方 SDK（base_url=https://api.deepseek.com）
+deepeval>=0.12            # 事实一致性 & 抄袭率检测（可选但推荐）
+jinja2>=3.1.2             # Prompt templates
+
+# ===================== 数据库 =====================
+# prisma>=0.22             # prisma-client-py；注意：prisma对Python3.13+兼容性差，3.13+建议注释，使用内置sqlite3
+psycopg[binary]>=3.2      # 直接连 PostgreSQL
+sqlalchemy>=2.0
+
+# ===================== HTTP & 网络请求 =====================
+requests>=2.32
+httpx[http2]>=0.27
+aiohttp>=3.9.0
+tenacity>=8.5             # 重试
+
+# ===================== HTML/网页解析、爬虫 =====================
+beautifulsoup4>=4.12
+lxml>=5.2
+html5lib>=1.1
+feedparser>=6.0.11        # RSS/Atom parsing
+
+# playwright>=1.45        # 只在需要 JS 渲染的爬虫用（另外要 playwright install chromium）；重量级，按需开启
+
+# ===================== 对象存储 S3兼容(Cloudflare R2) =====================
+boto3>=1.34
+
+# ===================== 数据校验 & 配置 =====================
+pydantic>=2.8
+pydantic-settings>=2.3
+python-dotenv>=1.0
+PyYAML>=6.0
+
+# ===================== 文本处理 =====================
+markdown-it-py>=3.0.0
+python-slugify>=8.0.1
+difflib2>=1.0             # 字符重合率；difflib为python内置库
+
+# ===================== 日期与时区 =====================
+python-dateutil>=2.8.2
+pytz>=2023.3
+
+# ===================== 日志系统 =====================
+structlog>=24.4           # 结构化日志
+loguru>=0.7.2             # 简易日志库，二选一即可，不需要可以注释掉一个
+
+# ===================== 工具、CLI、异步控制 =====================
+tqdm>=4.66
+click>=8.1                # CLI 入口
+aiometer>=0.6             # 异步限流

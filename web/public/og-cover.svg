@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="55%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="20%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#0b1020" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g transform="translate(72,64)">
+    <rect rx="14" ry="14" width="56" height="56" fill="#7c3aed"/>
+    <text x="28" y="40" font-family="Inter,sans-serif" font-weight="900" font-size="28" text-anchor="middle" fill="#fff">G</text>
+    <text x="76" y="44" font-family="Inter,sans-serif" font-weight="800" font-size="30" fill="#fff">GameRank<tspan fill="#cbd5e1" font-weight="500"> Pro</tspan></text>
+  </g>
+  <g transform="translate(72,276)">
+    <text x="0" y="0" font-family="Inter,'PingFang SC','Microsoft YaHei',sans-serif" font-size="62" font-weight="900" letter-spacing="-0.02em" fill="#fff">
+      Top 100 Mobile Games 2026
+    </text>
+    <text x="0" y="80" font-family="Inter,sans-serif" font-size="34" font-weight="800" fill="#e9d5ff">
+      全球手游综合热度排行榜 + 5 篇每版本更新攻略
+    </text>
+  </g>
+  <g transform="translate(72,470)">
+    <text x="0" y="0" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cbd5e1">
+      iOS · Android cross-platform · 10 genre hubs · 500+ patch guides · zh-CN / zh-TW / EN
+    </text>
+  </g>
+  <g transform="translate(72,572)">
+    <line x1="0" y1="0" x2="1056" y2="0" stroke="rgba(255,255,255,0.12)"/>
+    <text x="0" y="28" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#cbd5e1">www.gamerank.pro</text>
+  </g>
+</svg>

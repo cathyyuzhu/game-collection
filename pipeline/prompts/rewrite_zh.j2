@@ -1,0 +1,33 @@
+{# Step 2 · 简体中文攻略改写 (DeepSeek V2) #}
+请基于以下结构化事实，重写一篇完整的手游攻略 Markdown。
+
+## 硬性规则（违反即失败）
+1. 以下 keyFacts 中的数值禁止任何更改，必须原封不动出现在正文中（最好用表格展示）：
+{% for kf in extracted.keyFacts %}- {{ kf.field }} = {{ kf.value }}{{ ' ('+kf.unit+')' if kf.unit else '' }}
+{% endfor %}
+2. 文章结构必须严格为下面 5 段，使用 Markdown：
+   - # 标题：{{ extracted.title }}
+   - ## 一、TL;DR 摘要（3-5 句话，带 emoji 总结）
+   - ## 二、✅ 核心要点清单（无序列表 3-6 条）
+   - ## 三、🛠️ 操作步骤（每个步骤编号 + H3 标题 + 详细内容 + 💡 小贴士）
+     {% for s in extracted.steps %}### 步骤 {{ s.stepNum }}：{{ s.title }}
+     {{ s.content }}
+     {% if s.tips %}{% for t in s.tips %}- 💡 {{ t }}
+{% endfor %}{% endif %}
+     {% endfor %}
+   - ## 四、📊 关键数值表（把 keyFacts 用 Markdown 表格列出来，列：项目/数值/单位）
+   - ## 五、小编提示（1-2 句小编亲测口吻的真实感提示，不要虚构数字，可用句式：「我自己测下来...」「建议新手先...」）
+3. 关键数据全部用表格展示（Step 四 已强制）
+4. 文本重复度 ≤ 30%（相对于原始源文）。必须用你自己的措辞重新组织，禁止抄原句
+5. 不得出现任何广告、二维码、引流话术
+
+## 游戏上下文
+- 游戏：{{ extracted.gameName }}
+- 适用版本：{{ extracted.gameVersion }}
+- 攻略类型：{{ extracted.guideType }}
+
+## 专有名词表（zhCN → zhTW/en 时要用）
+{% for g in extracted.glossary %}- {{ g.term }}
+{% endfor %}
+
+只输出 Markdown（不含 yaml frontmatter），不要输出额外说明文字。

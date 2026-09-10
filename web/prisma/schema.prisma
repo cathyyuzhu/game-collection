@@ -1,0 +1,223 @@
+// Prisma schema - Game Collection
+// Dev uses SQLite, Prod switch to PostgreSQL by changing provider + DATABASE_URL
+// NOTES for SQLite compatibility:
+//   - Enum types are NOT supported → use String with fixed values
+//   - Json type is NOT supported → use String and JSON.stringify/parse at runtime
+//   - String arrays (String[]) work via Prisma's serialization layer (OK)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  // provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Game {
+  id               String      @id @default(cuid())
+  slug             String      @unique
+  // --- SQLite does NOT support primitive arrays, so store JSON strings.
+  //     Parsed to string[] in reshapeGame() in lib/queries.ts
+  platforms        String              // JSON string array: ["ios","android"]
+  categories       String              // JSON string array: ["rpg","card","action",...]
+  taptapId         String?
+  appStoreId       String?
+  rawgId           Int?
+  globalScore      Float?
+  globalRank       Int?
+  iosRank          Int?
+  androidRank      Int?
+  iosDownloads     BigInt?      // SQLite: 64-bit required for 10^9 download counts
+  androidDownloads BigInt?      // SQLite INT is 32-bit signed max 2,147,483,647, overflow → P2023
+  taptapRating     Float?
+  appStoreRating   Float?
+  ratingCount      BigInt?      // ratings > 2M also fits in 64-bit only
+  developer        String?
+  publisher        String?
+  releaseDate      DateTime?
+  // ---- Basic flat media URLs (quick-access mirrors of GameMedia) ----
+  iconUrl          String?             // 512x512 square icon
+  bannerUrl        String?             // 16:9 hero banner
+  thumbnailUrl     String?             // 4:3 card thumbnail
+  screenshots      String              // JSON array of strings: [url1, url2, ...]
+  videos           String              // JSON array of strings
+  trailerUrl       String?             // main official trailer (top slot)
+  // ---- Extended (JSON stored as String for SQLite compat) ----
+  mediaMeta        String?             // JSON: {screenshotCount, videoCount, durationSec, ...}
+  // ---- Relations ----
+  media            GameMedia[]
+  guides           Guide[]
+  i18n             GameI18n[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([globalRank])
+}
+
+// ====== Game Media Master Table (one row per image / video captured) ======
+// NOTE: MediaType values (used as plain String for SQLite compat):
+//   ICON | BANNER | THUMBNAIL | SCREENSHOT | VIDEO | TRAILER | GAMEPLAY | COVER_ART | OTHER
+model GameMedia {
+  id           String     @id @default(cuid())
+  gameId       String
+  game         Game       @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  type         String              // MediaType value, see list above
+  // ---- Storage (R2/S3) ----
+  storageKey   String?             // e.g. games/genshin/screenshots/001.webp
+  url          String              // final CDN URL
+  // ---- Source provenance (copyright trace) ----
+  sourceUrl    String?             // raw source URL where media was scraped from
+  sourceSite   String?             // taptap | appstore | youtube | rawg | official ...
+  copyright    String?             // attribution / license statement
+  // ---- Generic metadata ----
+  mimeType     String?             // image/webp, video/mp4, application/x-mpegURL ...
+  width        Int?
+  height       Int?
+  sizeBytes    Int?
+  // ---- Video only ----
+  durationSec  Int?                // seconds
+  posterUrl    String?
+  hlsUrl       String?             // .m3u8 HLS manifest
+  // ---- Image only ----
+  isAnimated   Boolean?            // GIF / APNG / animated WebP
+  captionZh    String?             // caption in Simplified Chinese (→ img alt for SEO)
+  captionEn    String?             // caption in English
+  // ---- Ordering & locale ----
+  orderIndex   Int        @default(0)
+  locale       String?             // language-scoped media if needed
+  // ---- Process status ----
+  status       String     @default("ready") // pending_optimize | ready | broken
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([gameId, type])
+  @@index([status])
+}
+
+model GameI18n {
+  id          String @id @default(cuid())
+  gameId      String
+  locale      String // zh-CN / zh-TW / en
+  name        String
+  description String
+  game        Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  @@unique([gameId, locale])
+  @@index([locale, name])
+}
+
+model Guide {
+  id           String        @id @default(cuid())
+  gameId       String
+  slug         String
+  guideType    String        // beginner / team / boss / gacha / faq
+  gameVersion  String
+  // ---- Fast-flat media ----
+  coverImage   String?
+  gallery      String        // JSON array of image URLs (SQLite: no primitive list support)
+  videoUrl     String?       // optional embedded walkthrough video
+  mediaMeta    String?       // JSON: {imgCount, videoCount, hasVideo}
+  // ---- Core fields ----
+  readMinutes  Int
+  publishedAt  DateTime
+  usefulCount  Int           @default(0)
+  uselessCount Int           @default(0)
+  game         Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  i18n         GuideI18n[]
+  sources      GuideSource[]
+  media        GuideMedia[]
+  feedback     Feedback[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  @@unique([gameId, slug])
+  @@index([gameId])
+  @@index([publishedAt])
+  @@index([guideType])
+}
+
+// ====== Per-guide media (images / GIFs / videos inside guide article, FULLY SEPARATE from GameMedia) ======
+model GuideMedia {
+  id          String   @id @default(cuid())
+  guideId     String
+  guide       Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  kind        String   // image / video / gif / diagram
+  storageKey  String?  // R2/S3 key
+  url         String   // CDN URL
+  sourceUrl   String?  // original captured URL (compliance trail)
+  sourceSite  String?
+  captionZh   String?  // Simplified Chinese alt text
+  captionEn   String?
+  captionTw   String?  // Traditional Chinese
+  mimeType    String?
+  width       Int?
+  height      Int?
+  sizeBytes   Int?
+  durationSec Int?     // video only
+  posterUrl   String?
+  contentRef  String?  // anchor in Markdown body (agent correlation)
+  orderIndex  Int      @default(0)
+  status      String   @default("ready")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([guideId])
+}
+
+model GuideI18n {
+  id       String @id @default(cuid())
+  guideId  String
+  locale   String
+  title    String
+  tldr     String
+  content  String  // Markdown
+  keyFacts String? // JSON: [{field, value, unit}, ...] (SQLite: store as JSON string)
+  guide    Guide  @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  @@unique([guideId, locale])
+  @@index([locale])
+}
+
+model GuideSource {
+  id             String   @id @default(cuid())
+  guideId        String
+  sourceName     String            // e.g. taptap-topic-12345
+  sourceUrl      String            // captured source URL
+  sourceType     String            // community_guide / professional_guide / wiki / forum_post / video_transcript
+  author         String?
+  crawledAt      DateTime @default(now())
+  transformation String?           // e.g. llm_rewrite_v1_deepseek_v2
+  similarityPct  Float?            // post-rewrite character overlap vs source
+  guide          Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+}
+
+model RawGame {
+  id            String   @id @default(cuid())
+  source        String             // taptap / appstore / rawg / googleplay
+  sourceId      String             // source-side identifier
+  payload       String             // JSON string (SQLite-compat) of the raw capture
+  mediaBundle   String?            // JSON string: [{type, url, sourceUrl, ...}]
+  matchedGameId String?
+  createdAt     DateTime @default(now())
+  @@unique([source, sourceId])
+}
+
+model RawGuide {
+  id             String   @id @default(cuid())
+  source         String
+  sourceUrl      String   @unique
+  title          String
+  html           String
+  text           String
+  factsJson      String?            // extracted structured facts JSON
+  matchedGuideId String?
+  createdAt      DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  guideId   String
+  ip        String
+  isUseful  Boolean
+  createdAt DateTime @default(now())
+  guide     Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  @@unique([guideId, ip])
+}

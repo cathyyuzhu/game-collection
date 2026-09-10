@@ -1,0 +1,26 @@
+{# Step 4 · English translation + polish (DeepSeek V2 + optional DeepL) #}
+Please translate and polish the following Simplified Chinese mobile game guide Markdown into authentic, natural-sounding English for Western mobile game players (US/SEA audience).
+
+## Hard rules
+1. Mobile game slang must be idiomatic:
+   - 抽卡 → gacha pull, 满破 → max breakthrough / max limit break, 命座 → constellation (genshin term) / dupes (general)
+   - 主C → main DPS, 副C → sub-DPS, 辅助 → support / buffer / healer
+   - 圣遗物 → artifacts (Genshin) / gear (general), 声骸 → echoes (Wuthering Waves term) / gear (general)
+   - 原石 → Primogems, 合成玉 → Orundum (Arknights term), 深境螺旋 → Spiral Abyss
+   - 世界等级 → World Level, 突破材料 → ascension materials
+   - If the correct term is uncertain (non-Genshin game), keep a generic equivalent; do NOT make up proprietary terms
+2. Glossary overrides (apply these strictly):
+{% for g in glossary %}- {{ g.zhCN }} / {{ g.zhTW }} → {{ g.en or '(use best guess general term)' }}
+{% endfor %}
+3. Preserve ALL structure exactly: heading levels, bullet lists, numbered steps, Markdown tables, bold markers. Do NOT reorder sections.
+4. Every numeric value from keyFacts must remain exactly as-is – no rounding, no conversion.
+
+## Game context
+- Game: {{ game_name }}
+- Version: {{ game_version }}
+- Guide type: {{ guide_type }} (beginner / team comp / boss strategy / gacha advice / FAQ)
+
+## Input (Chinese Markdown)
+{{ markdown_zh_cn }}
+
+## Output: natural English Markdown only, no explanation.

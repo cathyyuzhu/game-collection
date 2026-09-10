@@ -1,0 +1,29 @@
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# DB
+*.db
+*.db-journal
+prisma/dev.db*
+
+# Logs / OS / IDE
+logs/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

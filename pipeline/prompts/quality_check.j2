@@ -1,0 +1,47 @@
+{# Step 5 · Quality check (DeepSeek-V2-Lite + rules) #}
+你是一个严格的手游攻略质检机器人。请对下面 3 篇（简中/繁中/英文）同一来源的攻略，输出一份 JSON 质检报告。
+
+## 检查项（每项 true=通过，false=不通过）
+1. keyFacts_numeric_match：三语中所有出现的 keyFacts 数字（带单位）完全一致，没有任何 LLM 幻觉篡改
+2. step_count_match：三语的步骤编号数量完全一致（如简中 4 步，繁/英也必须 4 步）
+3. structure_complete：三语都包含 TL;DR 段、核心要点清单、编号步骤、关键数值表、小编提示 5 段结构（英文对应结构）
+4. markdown_wellformed：每篇 Markdown 没有未闭合的加粗/列表/表格语法错误
+5. source_similarity_ok：三语任一篇与任意 source_text 的字符重复度序列匹配 ratio ≤ 0.30
+
+## 输入
+### 游戏 keyFacts 基准
+{% for kf in key_facts %}- {{ kf.field }} = {{ kf.value }} {{ kf.unit }}
+{% endfor %}
+
+### zh-CN 攻略
+<zh-cn>{{ zh_cn }}</zh-cn>
+
+### zh-TW 攻略
+<zh-tw>{{ zh_tw }}</zh-tw>
+
+### en 攻略
+<en>{{ en }}</en>
+
+### 原始采集文本片段（前 2000 字每篇）
+{% for s in sources %}- SOURCE_{{ loop.index }}: {{ s[:2000] }}
+
+{% endfor %}
+
+### 外部计算的重复度分数（供参考）
+- zh-cn max similarity vs sources: {{ sim_zh_cn }}
+- zh-tw max similarity vs sources: {{ sim_zh_tw }}
+- en    max similarity vs sources: {{ sim_en }}
+
+## 只输出 JSON，不要其他文字，Schema：
+{
+  "passed": true|false,
+  "checks": {
+    "keyFacts_numeric_match": {"ok": bool, "errors": ["具体差异描述"]},
+    "step_count_match":         {"ok": bool, "errors": []},
+    "structure_complete":       {"ok": bool, "errors": []},
+    "markdown_wellformed":      {"ok": bool, "errors": []},
+    "source_similarity_ok":     {"ok": bool, "errors": []}
+  },
+  "overall_score": 0.0 ~ 1.0,
+  "notes": "人类可读的一句话总结"
+}

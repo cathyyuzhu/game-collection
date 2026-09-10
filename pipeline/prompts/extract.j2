@@ -1,0 +1,35 @@
+{# Step 1 · Information Extraction Prompt (DeepSeek-V2-Lite) #}
+你是一个手游攻略结构化抽取器。请从以下多篇同源攻略中抽取统一的结构化 JSON。
+
+【关键要求】
+1. keyFacts 中必须提取所有具体数值：等级、伤害、概率、消耗材料数量、所需原石/合成玉、角色命座数、圣遗物主副词条百分比、HP/ATK/DEF 具体数字
+2. glossary 提取所有游戏专有名词，并给出三语翻译（若原文只出现中文，翻译英文时要用该游戏社区的通用译法；没有 100% 把握就留空 en 字段）
+3. steps 步骤数必须 ≥ 2，步骤里要有可执行的操作，不能是笼统的描述
+4. guideType 只能是 5 种之一：beginner / team / boss / gacha / faq
+5. 只输出合法 JSON，不要任何多余文字、不要 Markdown 代码块
+
+【输入原始攻略内容】
+{% for src in sources %}
+--- 来源 #{{ loop.index }}：{{ src.source_url or ('(unknown source '+loop.index|string+')') }} ---
+标题：{{ src.title }}
+正文：
+{{ src.text[:8000] }}
+{% endfor %}
+
+【输出 JSON Schema】
+{
+  "gameName": "string",
+  "gameVersion": "string, e.g. v5.2.0，如果原文没提就用 v1.0.0",
+  "guideType": "beginner|team|boss|gacha|faq",
+  "title": "string，一句话攻略标题（≤30字，包含关键词）",
+  "tldr": "string，3-5 句话总结攻略核心结论（中文）",
+  "steps": [
+    {"stepNum": 1, "title": "步骤标题", "content": "步骤详细描述（中文，50-150字）", "tips": ["提示1","提示2"]}
+  ],
+  "keyFacts": [
+    {"field": "字段名（中文）", "value": "必须是字符串；数字统一带单位如 20, 60%, 120万", "unit": "个/次/%/抽/小时/HP 等或留空"}
+  ],
+  "glossary": [
+    {"term": "中文词条", "zhCN": "简体", "zhTW": "繁体", "en": "English (leave empty if unsure)"}
+  ]
+}
