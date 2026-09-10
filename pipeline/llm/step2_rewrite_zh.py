@@ -24,7 +24,7 @@ try:
 except Exception:
     import logging as logger  # type: ignore
 
-from llm.deepseek_client import get_llm_client  # noqa: E402
+from llm.deepseek_client import get_llm_client, strip_llm_markdown_wrapper  # noqa: E402
 from llm.schemas import ExtractedGuide, ProcessedGuide  # noqa: E402
 
 
@@ -79,6 +79,8 @@ def rewrite_zh_cn(extracted: ExtractedGuide, *, force_mock: bool = False,
     for _ in range(max(1, max_retries + 1)):
         try:
             out = client.chat(system, user, model="v2", temperature=0.85)
+            if not client.mock_mode:
+                out = strip_llm_markdown_wrapper(out)
             if len(out) < 300 and not client.mock_mode:
                 raise ValueError(f"Output too short ({len(out)} chars), retry.")
             mins = max(1, round(len(out) / 450))

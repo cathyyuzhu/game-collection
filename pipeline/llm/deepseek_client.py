@@ -151,6 +151,28 @@ def _mock_en(text_cn: str) -> str:
            + f"Please provide the DeepSeek API key to get real English output."
 
 
+def strip_llm_markdown_wrapper(text: str) -> str:
+    """Normalize raw LLM markdown output.
+
+    Real DeepSeek calls (unlike the deterministic mock) sometimes wrap the
+    guide body in a ```markdown fence or a leading/trailing '---' rule
+    (frontmatter-style), even when the prompt says "output only Markdown".
+    Strip that wrapper so downstream structure checks (starts with '# ')
+    see the actual content.
+    """
+    t = text.strip()
+    if t.startswith("```"):
+        t = re.sub(r"^```(?:markdown|md)?\s*\n", "", t)
+        t = re.sub(r"\n?```\s*$", "", t)
+        t = t.strip()
+    lines = t.split("\n")
+    while lines and lines[0].strip() in ("---", "***", "___"):
+        lines.pop(0)
+    while lines and lines[-1].strip() in ("---", "***", "___"):
+        lines.pop()
+    return "\n".join(lines).strip()
+
+
 def _en_title(user: str) -> str:
     m = re.search(r"#\s+(.+)", user)
     title = m.group(1).strip() if m else (user.strip()[:40] or "Complete Mobile Game Guide")

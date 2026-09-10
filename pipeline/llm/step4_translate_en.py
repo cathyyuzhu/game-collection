@@ -24,7 +24,7 @@ try:
 except Exception:
     import logging as logger  # type: ignore
 
-from llm.deepseek_client import get_llm_client, _mock_en  # noqa: E402
+from llm.deepseek_client import get_llm_client, _mock_en, strip_llm_markdown_wrapper  # noqa: E402
 from config import settings  # noqa: E402
 from llm.schemas import GlossaryItem, GuideType, ProcessedGuide  # noqa: E402
 
@@ -117,6 +117,7 @@ def translate_en(
     for _ in range(max(1, max_retries + 1)):
         try:
             out = client.chat(system, user, model="v2", temperature=0.6)
+            out = strip_llm_markdown_wrapper(out)
             if len(out) < 200:
                 raise ValueError(f"EN output too short ({len(out)} chars)")
             m = re.search(r"^#\s*(.+)", out, re.M)

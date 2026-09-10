@@ -24,7 +24,7 @@ try:
 except Exception:
     import logging as logger  # type: ignore
 
-from llm.deepseek_client import get_llm_client, _to_tw_mock  # noqa: E402
+from llm.deepseek_client import get_llm_client, _to_tw_mock, strip_llm_markdown_wrapper  # noqa: E402
 from llm.schemas import GlossaryItem, ProcessedGuide  # noqa: E402
 
 
@@ -89,6 +89,7 @@ def localize_zh_tw(markdown_zh_cn: str, glossary: List[GlossaryItem], *,
     for _ in range(max(1, max_retries + 1)):
         try:
             out = client.chat(system, user, model="v2", temperature=0.4)
+            out = strip_llm_markdown_wrapper(out)
             if len(out) < 200:
                 raise ValueError(f"TW output too short ({len(out)} chars)")
             # Pull title from first # line
