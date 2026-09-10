@@ -288,28 +288,30 @@ def upsert_game_media(game_id: str, type: str, url: str, *,
 def upsert_guide(game_id: str, slug: str, guide_type: str, *,
                  game_version: str = "v1.0.0",          # Prisma: gameVersion String (required!)
                  read_minutes: Optional[int] = None,
-                 published_at: Optional[str] = None) -> str:
+                 published_at: Optional[str] = None,
+                 gallery: Optional[List[str]] = None) -> str:
     """Upsert into Guide table. Columns (Prisma / SQLite actual):
-       id, gameId, slug, guideType, gameVersion, readMinutes, publishedAt,
+       id, gameId, slug, guideType, gameVersion, gallery, readMinutes, publishedAt,
        usefulCount, uselessCount, createdAt, updatedAt.
     """
+    gallery_json = json.dumps(gallery or [], ensure_ascii=False)
     with get_sqlite_conn() as conn:
         existing = conn.execute("SELECT id FROM Guide WHERE gameId=? AND slug=?", (game_id, slug)).fetchone()
         if existing:
             conn.execute(
-                """UPDATE Guide SET guideType=?, gameVersion=?, readMinutes=?, publishedAt=?, updatedAt=?
+                """UPDATE Guide SET guideType=?, gameVersion=?, gallery=?, readMinutes=?, publishedAt=?, updatedAt=?
                    WHERE id=?""",
-                (guide_type, game_version, read_minutes or 5, published_at or now_iso(),
+                (guide_type, game_version, gallery_json, read_minutes or 5, published_at or now_iso(),
                  now_iso(), existing["id"]),
             )
             return existing["id"]
         conn.execute(
             """INSERT INTO Guide (
-                id, gameId, slug, guideType, gameVersion, readMinutes, publishedAt,
+                id, gameId, slug, guideType, gameVersion, gallery, readMinutes, publishedAt,
                 usefulCount, uselessCount, createdAt, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP, ?)""",
             (
-                cuid(), game_id, slug, guide_type, game_version,
+                cuid(), game_id, slug, guide_type, game_version, gallery_json,
                 read_minutes or 5, published_at or now_iso(), now_iso(),
             ),
         )
@@ -343,16 +345,28 @@ def upsert_guide_i18n(guide_id: str, locale: str, title: str, tldr: str, content
 
 
 # -------------------------------------------------------------- GuideSource
+_SOURCE_TYPE_BY_SITE = {
+    "taptap": "community_guide",
+    "4399": "wiki",
+    "appstore": "professional_guide",
+    "rawg": "professional_guide",
+}
+
+
 def upsert_guide_source(guide_id: str, site_name: str, source_url: str,
                         author: Optional[str] = None,
                         crawled_at: Optional[str] = None,
-                        similarity: Optional[float] = None) -> str:
+                        similarity: Optional[float] = None,
+                        source_type: Optional[str] = None,
+                        transformation: Optional[str] = None) -> str:
     """Writes GuideSource row per Prisma schema.
 
-    Prisma fields: guideId, sourceUrl, siteName, author, crawledAt (DateTime), similarity.
+    Prisma fields: guideId, sourceUrl, sourceName, sourceType (required),
+    author, crawledAt (DateTime), transformation, similarityPct.
     crawled_at accepts ISO string; we fall back to now().
     """
     dt = crawled_at or now_iso()
+    stype = source_type or _SOURCE_TYPE_BY_SITE.get(site_name, "community_guide")
     with get_sqlite_conn() as conn:
         existing = conn.execute(
             "SELECT id FROM GuideSource WHERE guideId=? AND sourceUrl=?",
@@ -360,16 +374,18 @@ def upsert_guide_source(guide_id: str, site_name: str, source_url: str,
         ).fetchone()
         if existing:
             conn.execute(
-                """UPDATE GuideSource SET siteName=?, author=?, crawledAt=?, similarity=?
+                """UPDATE GuideSource SET sourceName=?, sourceType=?, author=?, crawledAt=?,
+                   transformation=?, similarityPct=?
                    WHERE id=?""",
-                (site_name, author, dt, similarity, existing["id"]),
+                (site_name, stype, author, dt, transformation, similarity, existing["id"]),
             )
             return existing["id"]
         conn.execute(
             """INSERT INTO GuideSource (
-                id, guideId, siteName, sourceUrl, author, crawledAt, similarity
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (cuid(), guide_id, site_name, source_url, author, dt, similarity),
+                id, guideId, sourceName, sourceUrl, sourceType, author, crawledAt,
+                transformation, similarityPct
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (cuid(), guide_id, site_name, source_url, stype, author, dt, transformation, similarity),
         )
         return conn.execute(
             "SELECT id FROM GuideSource WHERE guideId=? AND sourceUrl=?",
@@ -401,7 +417,7 @@ def upsert_guide_media(guide_id: str, type: str, url: str, *,
     """
     with get_sqlite_conn() as conn:
         existing = conn.execute(
-            "SELECT id FROM GuideMedia WHERE guideId=? AND type=? AND url=?",
+            "SELECT id FROM GuideMedia WHERE guideId=? AND kind=? AND url=?",
             (guide_id, type, url),
         ).fetchone()
         row: Dict[str, Any] = {}
@@ -430,25 +446,25 @@ def upsert_guide_media(guide_id: str, type: str, url: str, *,
         if existing:
             conn.execute(
                 """UPDATE GuideMedia SET
-                    guideId=?, type=?, url=?,
+                    guideId=?, kind=?, url=?,
                     storageKey=?, sourceUrl=?, sourceSite=?,
                     mimeType=?, sizeBytes=?, width=?, height=?, durationSec=?, posterUrl=?,
-                    sortOrder=?, captionZh=?, captionEn=?, anchor=?, updatedAt=?
+                    orderIndex=?, captionZh=?, captionEn=?, contentRef=?, updatedAt=?
                    WHERE id=?""",
                 vals + (existing["id"],),
             )
             return existing["id"]
         conn.execute(
             """INSERT INTO GuideMedia (
-                id, guideId, type, url,
+                id, guideId, kind, url,
                 storageKey, sourceUrl, sourceSite,
                 mimeType, sizeBytes, width, height, durationSec, posterUrl,
-                sortOrder, captionZh, captionEn, anchor, createdAt, updatedAt
+                orderIndex, captionZh, captionEn, contentRef, createdAt, updatedAt
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (cuid(),) + vals + (now_iso(),),
         )
         return conn.execute(
-            "SELECT id FROM GuideMedia WHERE guideId=? AND type=? AND url=?",
+            "SELECT id FROM GuideMedia WHERE guideId=? AND kind=? AND url=?",
             (guide_id, type, url),
         ).fetchone()["id"]
 
