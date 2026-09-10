@@ -30,7 +30,8 @@ import {
 } from "@/components/guide/widgets-imports";
 // Pure utilities imported directly to avoid Server/Client ambiguity in re-exports.
 import { extractHeadings } from "@/components/guide/GuideUtils";
-import { buildPageFaqs, FaqAccordion } from "@/components/seo/FaqAccordion";
+import { FaqAccordion } from "@/components/seo/FaqAccordion";
+import { buildPageFaqs } from "@/components/seo/buildPageFaqs";
 import {
   JsonLd,
   articleSchema,
@@ -132,8 +133,10 @@ export default async function GuideDetailPage({ params }: Params) {
   if (!full || !full.guide) notFound();
 
   const messages = getMessages(locale) as Messages;
-  const t = (k: string, p?: Record<string, string | number>) =>
-    (messages as any)[k.split(".")[0]]?.[k.split(".")[1]] ?? k;
+  const t = (k: string, p?: Record<string, string | number>) => {
+    const val = k.split(".").reduce<any>((acc, part) => acc?.[part], messages);
+    return typeof val === "string" ? val : k;
+  };
 
   const gameName = getGameName(game, locale);
   const { guide, guideI18n } = full;
