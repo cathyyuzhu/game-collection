@@ -17,7 +17,7 @@ for p in (_HERE, _PKG_ROOT):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class GuideType(str, Enum):
@@ -39,6 +39,15 @@ class KeyFact(BaseModel):
     field: str = Field(description="Short label, e.g. '推荐角色等级'")
     value: str = Field(description="Numeric or enumerated value, e.g. '>= 80'")
     unit: Optional[str] = Field(default=None, description="Unit: 级 / % / 秒 / 人, or None")
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def _coerce_value_to_str(cls, v: Any) -> Any:
+        # The real LLM sometimes returns numeric JSON (90 instead of "90")
+        # even though the prompt asks for a string.
+        if isinstance(v, (int, float)):
+            return str(v)
+        return v
 
 
 class StepItem(BaseModel):
@@ -72,6 +81,23 @@ class ExtractedGuide(BaseModel):
     faqs: List[str] = Field(default_factory=list)
     glossary: List[GlossaryItem] = Field(default_factory=list)
     sourceLocale: str = "zh-CN"
+
+    @field_validator("faqs", mode="before")
+    @classmethod
+    def _coerce_faqs_to_str(cls, v: Any) -> Any:
+        # The real LLM sometimes returns {"question": ..., "answer": ...}
+        # objects instead of a single "Q: ... A: ..." string.
+        if not isinstance(v, list):
+            return v
+        out: List[str] = []
+        for item in v:
+            if isinstance(item, dict):
+                q = item.get("question") or item.get("q") or ""
+                a = item.get("answer") or item.get("a") or ""
+                out.append(f"Q: {q} A: {a}".strip())
+            else:
+                out.append(item)
+        return out
 
 
 # ============================================================
